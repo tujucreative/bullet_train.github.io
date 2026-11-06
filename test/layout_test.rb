@@ -42,7 +42,9 @@ class LayoutTest < Minitest::Test
 
   def test_active_item
     assert_includes doc.at_css('a[href="/b/docs/teams/"]')["class"].split, "bg-primary-900"
-    refute_includes doc.at_css('a[href="/b/docs/"]')["class"].split, "bg-primary-900"
+    index_items = doc.css('nav a[href="/b/docs/"]')
+    refute_empty index_items
+    index_items.each { |a| refute_includes a["class"].to_s.split, "bg-primary-900" }
   end
 
   def test_menu_twice

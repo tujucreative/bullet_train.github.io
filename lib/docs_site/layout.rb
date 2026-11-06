@@ -9,6 +9,7 @@ module DocsSite
     def initialize(config:, menu:, template_path: File.join(config.source_dir, "layout.html.erb"))
       @config = config
       @menu = menu
+      # `capture` in templates relies on eoutvar: "@output".
       @template = ERB.new(File.read(template_path, encoding: "UTF-8"), trim_mode: "-", eoutvar: "@output")
     end
 

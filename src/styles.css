@@ -32,8 +32,7 @@
   text-decoration: none;
 }
 
-/* Syntax-highlighted blocks carry an inline background; keep it and pad it like a code card. */
+/* Syntax-highlighted blocks carry an inline background; keep it and round it like a code card. */
 .prose pre {
-  padding: 1rem;
   border-radius: .375rem;
 }

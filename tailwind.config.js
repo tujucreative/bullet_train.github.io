@@ -1,6 +1,9 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 const colors = require('tailwindcss/colors')
 
+// Omit deprecated aliases so reading them doesn't print Tailwind warnings.
+const DEPRECATED_COLORS = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
+
 module.exports = {
   content: [
     './src/**/*.{erb,yml,js}',
@@ -41,7 +44,11 @@ module.exports = {
           900: 'var(--secondary-900)',
         },
         base: colors.slate,
-        ...colors
+        ...Object.fromEntries(
+          Object.keys(colors)
+            .filter((name) => !DEPRECATED_COLORS.includes(name))
+            .map((name) => [name, colors[name]])
+        ),
       }),
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
