@@ -10,15 +10,14 @@ require "tmpdir"
 ref = ARGV.fetch(0, "v1.45.1")
 config = DocsSite::Config.new
 
-Dir.mktmpdir("bullet_train-core") do |dir|
-  unless system("git", "clone", "--depth", "1", "--branch", ref, DocsSite::Sync::REPO, dir)
-    warn "Could not clone #{DocsSite::Sync::REPO} at #{ref}"
-    exit 1
+DocsSite::CLI.run do
+  Dir.mktmpdir("bullet_train-core") do |dir|
+    unless system("git", "clone", "--depth", "1", "--branch", ref, DocsSite::Sync::REPO, dir)
+      raise DocsSite::BuildError, "Could not clone #{DocsSite::Sync::REPO} at #{ref}"
+    end
+    sha, status = Open3.capture2("git", "-C", dir, "rev-parse", "HEAD")
+    raise DocsSite::BuildError, "Could not read the commit sha of the clone" unless status.success?
+
+    DocsSite::Sync.new(config: config).call(upstream_dir: dir, ref: ref, sha: sha.strip)
   end
-  sha, status = Open3.capture2("git", "-C", dir, "rev-parse", "HEAD")
-  unless status.success?
-    warn "Could not read the commit sha of the clone"
-    exit 1
-  end
-  DocsSite::Sync.new(config: config).call(upstream_dir: dir, ref: ref, sha: sha.strip)
 end

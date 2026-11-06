@@ -50,4 +50,12 @@ class LayoutTest < Minitest::Test
   def test_menu_twice
     assert_equal 2, output.scan('href="/b/docs/teams/"').size
   end
+
+  def test_urls_escaped
+    config = DocsSite::Config.new(base_path: "/a&b", env: {})
+    html = DocsSite::Layout.new(config: config, menu: DocsSite::Menu.load(config)).render(DocsSite::Page.new(slug: "teams", html: "<p>x</p>", config: config))
+    refute_match %r{(href|src)="/a&b/}, html
+    assert_includes html, 'href="/a&amp;b/docs/" class="mx-auto"'
+    assert_includes html, 'href="/a&amp;b/assets/site.css"'
+  end
 end

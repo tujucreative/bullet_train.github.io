@@ -14,10 +14,4 @@ OptionParser.new do |parser|
 end.parse!
 
 config = DocsSite::Config.new(**options)
-begin
-  count = DocsSite::Builder.new(config: config).build
-  puts "Built #{count} pages into #{config.out_dir}"
-rescue DocsSite::BuildError => error
-  warn error.message
-  exit 1
-end
+DocsSite::CLI.build(config)

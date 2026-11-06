@@ -2,6 +2,7 @@ module DocsSite
   module IndexLayout
     COLUMNS = 3
 
+    # The docs index shows its h2 sections in three columns, as on the live site.
     def self.apply(html)
       start = html.index(/<h2[\s>]/)
       return html unless start

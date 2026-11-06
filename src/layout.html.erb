@@ -9,25 +9,25 @@
     <meta name="twitter:image:src" content="<%= h IMAGE_URL %>" />
     <meta name="twitter:site" content="@bullettrainco" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="<%= h truncate(page.title, 70) %>" />
-    <meta name="twitter:description" content="<%= h truncate(page.description, 160) %>" />
+    <meta name="twitter:title" content="<%= h Text.truncate(page.title, 70) %>" />
+    <meta name="twitter:description" content="<%= h Text.truncate(page.description, 160) %>" />
     <meta property="og:image" content="<%= h IMAGE_URL %>" />
     <meta property="og:site_name" content="<%= h Page::SITE_NAME %>" />
     <meta property="og:type" content="object" />
-    <meta property="og:title" content="<%= h truncate(page.title, 95) %>" />
+    <meta property="og:title" content="<%= h Text.truncate(page.title, 95) %>" />
     <meta property="og:url" content="<%= h page.absolute_url %>" />
     <meta property="og:description" content="<%= h page.description %>" />
-    <link href="<%= asset_url("logo/favicon.png") %>" rel="shortcut icon" />
+    <link href="<%= h asset_url("logo/favicon.png") %>" rel="shortcut icon" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" media="all" />
-    <link rel="stylesheet" href="<%= asset_url("assets/themify/themify-icons.css") %>" media="all" />
-    <link rel="stylesheet" href="<%= asset_url("assets/site.css") %>" media="all" />
-    <script src="<%= asset_url("assets/menu.js") %>" defer></script>
+    <link rel="stylesheet" href="<%= h asset_url("assets/themify/themify-icons.css") %>" media="all" />
+    <link rel="stylesheet" href="<%= h asset_url("assets/site.css") %>" media="all" />
+    <script src="<%= h asset_url("assets/menu.js") %>" defer></script>
   </head>
   <body class="bg-gradient-to-br from-secondary-200 to-primary-400 text-base-700 text-sm font-normal">
 <%- menu_html = capture do -%>
           <div class="flex items-center shrink-0 p-4 bg-blue-700 md:rounded-tl-lg">
-            <a href="<%= config.doc_url("index") %>" class="mx-auto">
-              <img class="h-5 w-auto mx-auto" src="<%= asset_url("logo/logo.png") %>" alt="Bullet Train" />
+            <a href="<%= h config.doc_url("index") %>" class="mx-auto">
+              <img class="h-5 w-auto mx-auto" src="<%= h asset_url("logo/logo.png") %>" alt="Bullet Train" />
             </a>
 
             <div class="lg:hidden absolute right-0">

@@ -8,6 +8,7 @@ module DocsSite
 
     attr_reader :sections
 
+    # Builds the menu from src/menu.yml with URLs resolved against the base path.
     def self.load(config)
       data = YAML.safe_load(File.read(File.join(config.source_dir, "menu.yml"), encoding: "UTF-8"))
       new(config, data.fetch("sections"))
@@ -31,12 +32,14 @@ module DocsSite
       @raw_urls.dup
     end
 
+    # Highlights the menu entry for the page being rendered.
     def active?(item, page_url)
       item.url == page_url
     end
 
     private
 
+    # Internal items get a base-path URL and a slug; external ones keep their URL as is.
     def build_item(config, raw)
       url = raw.fetch("url")
       if raw["external"]

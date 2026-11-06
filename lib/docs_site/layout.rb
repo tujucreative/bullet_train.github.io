@@ -13,6 +13,7 @@ module DocsSite
       @template = ERB.new(File.read(template_path, encoding: "UTF-8"), trim_mode: "-", eoutvar: "@output")
     end
 
+    # Wraps one page in the site shell (head, menu, content card).
     def render(page)
       @template.result(binding)
     end
@@ -30,11 +31,6 @@ module DocsSite
 
     def asset_url(path)
       config.asset_url(path)
-    end
-
-    # Rails' String#truncate with the default "..." omission.
-    def truncate(text, length)
-      (text.length > length) ? "#{text[0, length - 3]}..." : text
     end
   end
 end

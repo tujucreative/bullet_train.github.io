@@ -13,17 +13,10 @@ module DocsSite
       @out = out
     end
 
+    # Replaces the docs, records the source, prints the changes and returns them by kind.
     def call(upstream_dir:, ref:, sha:)
-      upstream_docs = File.join(upstream_dir, "bullet_train", "docs")
-      raise ArgumentError, "no docs directory at #{upstream_docs}" unless File.directory?(upstream_docs)
-
-      before = snapshot(@config.docs_dir)
-      after = snapshot(upstream_docs)
-      result = {
-        added: (after.keys - before.keys).sort,
-        removed: (before.keys - after.keys).sort,
-        changed: (before.keys & after.keys).select { |path| before[path] != after[path] }.sort
-      }
+      upstream_docs = upstream_docs_dir(upstream_dir)
+      result = diff(snapshot(@config.docs_dir), snapshot(upstream_docs))
 
       replace_docs(upstream_docs)
       write_upstream_file(ref, sha)
@@ -34,6 +27,24 @@ module DocsSite
 
     private
 
+    # Checks the checkout holds the docs before any local file is deleted.
+    def upstream_docs_dir(upstream_dir)
+      dir = File.join(upstream_dir, "bullet_train", "docs")
+      raise ArgumentError, "no docs directory at #{dir}" unless File.directory?(dir)
+      dir
+    end
+
+    # Added, removed and changed relative paths between two snapshots, each sorted.
+    def diff(before, after)
+      before_paths = before.keys
+      after_paths = after.keys
+      {
+        added: (after_paths - before_paths).sort,
+        removed: (before_paths - after_paths).sort,
+        changed: (before_paths & after_paths).reject { |path| before[path] == after[path] }.sort
+      }
+    end
+
     # Relative path => file content, for every file under dir.
     def snapshot(dir)
       return {} unless File.directory?(dir)
@@ -43,12 +54,14 @@ module DocsSite
       end
     end
 
+    # Swaps src/docs wholesale so files deleted upstream disappear too.
     def replace_docs(upstream_docs)
       FileUtils.rm_rf(@config.docs_dir)
       FileUtils.mkdir_p(File.dirname(@config.docs_dir))
       FileUtils.cp_r(upstream_docs, @config.docs_dir)
     end
 
+    # src/UPSTREAM records which upstream commit the vendored docs match.
     def write_upstream_file(ref, sha)
       File.write(File.join(@config.source_dir, "UPSTREAM"), <<~TEXT)
         repo: #{REPO}
@@ -58,6 +71,7 @@ module DocsSite
       TEXT
     end
 
+    # Prints a per-kind summary so the sync's effect can be reviewed before committing.
     def report(result, ref, sha)
       @out.puts "Synced docs from #{REPO} at #{ref} (#{sha})"
       result.each do |kind, paths|
@@ -66,6 +80,7 @@ module DocsSite
       end
     end
 
+    # menu.yml is hand-transcribed, so flag upstream menu changes for manual review.
     def warn_on_menu_drift(upstream_dir)
       layout = File.join(upstream_dir, LAYOUT_PATH)
       return unless File.file?(layout)
@@ -79,6 +94,7 @@ module DocsSite
       @out.puts "  only in menu.yml: #{format_urls(menu - upstream)}"
     end
 
+    # Keeps the drift warning readable when one side has nothing extra.
     def format_urls(urls)
       urls.empty? ? "(none)" : urls.sort.join(", ")
     end

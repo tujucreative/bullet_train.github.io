@@ -8,13 +8,7 @@ require "webrick"
 
 port = Integer(ARGV.fetch(0, "4000"))
 config = DocsSite::Config.new(base_path: "", out_dir: File.join(DocsSite::ROOT, "_site"))
-begin
-  count = DocsSite::Builder.new(config: config).build
-  puts "Built #{count} pages into #{config.out_dir}"
-rescue DocsSite::BuildError => error
-  warn error.message
-  exit 1
-end
+DocsSite::CLI.build(config)
 
 server = WEBrick::HTTPServer.new(Port: port, DocumentRoot: config.out_dir)
 trap("INT") { server.shutdown }

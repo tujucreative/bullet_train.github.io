@@ -1,7 +1,7 @@
 require "test_helper"
 
 class MenuTest < Minitest::Test
-  UPSTREAM_DIR = ENV.fetch("BT_CORE_DIR", "/tmp/claude-0/-home-user/6d18f5f6-1718-51d2-9c0d-69ca8de42800/scratchpad/src/bullet_train-core")
+  UPSTREAM_DIR = ENV["BT_CORE_DIR"]
 
   def config(base = "")
     DocsSite::Config.new(base_path: base, env: {})
@@ -50,8 +50,9 @@ class MenuTest < Minitest::Test
   end
 
   def test_matches_upstream_layout
+    skip "set BT_CORE_DIR to a bullet_train-core checkout to compare the menu with the upstream layout" unless UPSTREAM_DIR
     layout = File.join(UPSTREAM_DIR, "bullet_train/app/views/layouts/docs.html.erb")
-    skip "upstream layout not found at #{layout}" unless File.exist?(layout)
+    skip "upstream layout not found at #{layout} (check BT_CORE_DIR)" unless File.exist?(layout)
     assert_equal DocsSite::Menu.upstream_urls(File.read(layout, encoding: "UTF-8")), menu.internal_urls
   end
 
