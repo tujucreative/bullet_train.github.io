@@ -8,7 +8,8 @@ module.exports = {
   content: [
     './src/**/*.{erb,yml,js}',
     './lib/**/*.rb',
-    './_site/**/*.html',
+    // DOCS_SITE_OUT is set by the builder so a non-default --out dir is scanned too.
+    `${process.env.DOCS_SITE_OUT || './_site'}/**/*.html`,
   ],
   darkMode: 'selector',
   theme: {

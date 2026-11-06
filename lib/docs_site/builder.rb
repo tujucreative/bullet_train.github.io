@@ -10,20 +10,16 @@ module DocsSite
 
     NotFoundPage = Struct.new(:html, :url, :absolute_url, :title, :page_title, :description, keyword_init: true)
 
-    # BROWSERSLIST_IGNORE_OLD_DATA silences the "caniuse-lite is outdated" notice.
-    DEFAULT_CSS_COMMAND = ->(css_out_path) {
-      system({"BROWSERSLIST_IGNORE_OLD_DATA" => "1"}, "npx", "tailwindcss", "-c", "tailwind.config.js", "-i", "src/styles.css", "-o", css_out_path, "--minify", chdir: ROOT)
-    }
-
     def initialize(config:, css_command: nil, out: $stdout)
       @config = config
-      @css_command = css_command || DEFAULT_CSS_COMMAND
+      @css_command = css_command || default_css_command
       @out = out
     end
 
     # Writes the whole site into config.out_dir and returns the number of doc pages written.
     def build
       raise BuildError, "Docs directory not found: #{config.docs_dir}" unless Dir.exist?(config.docs_dir)
+      guard_out_dir!
 
       FileUtils.rm_rf(config.out_dir)
       FileUtils.mkdir_p(config.out_dir)
@@ -41,6 +37,24 @@ module DocsSite
     private
 
     attr_reader :config
+
+    # DOCS_SITE_OUT points tailwind.config.js at the generated HTML;
+    # BROWSERSLIST_IGNORE_OLD_DATA silences the "caniuse-lite is outdated" notice.
+    def default_css_command
+      env = {"DOCS_SITE_OUT" => File.expand_path(config.out_dir), "BROWSERSLIST_IGNORE_OLD_DATA" => "1"}
+      ->(css_out_path) {
+        system(env, "npx", "tailwindcss", "-c", "tailwind.config.js", "-i", "src/styles.css", "-o", css_out_path, "--minify", chdir: ROOT)
+      }
+    end
+
+    # The out dir is wiped on every build, so it must not be (or contain) the repo or the sources.
+    def guard_out_dir!
+      out_dir = File.expand_path(config.out_dir)
+      protected_dirs = [ROOT, config.source_dir].map { |dir| File.expand_path(dir) }
+      return unless protected_dirs.any? { |dir| dir == out_dir || dir.start_with?(File.join(out_dir, "")) }
+
+      raise BuildError, "Refusing to build into #{out_dir}: it would delete the repository or the source files"
+    end
 
     def layout
       @layout ||= Layout.new(config: config, menu: Menu.load(config))

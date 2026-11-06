@@ -85,6 +85,22 @@ class BuilderTest < Minitest::Test
     assert_includes error.message, "Broken link in teams: /docs/nope/"
   end
 
+  def test_out_dir_at_root_fails
+    config = DocsSite::Config.new(out_dir: DocsSite::ROOT, env: {})
+    assert_raises(DocsSite::BuildError) { DocsSite::Builder.new(config: config, css_command: STUB_CSS, out: StringIO.new).build }
+    assert Dir.exist?(File.join(DocsSite::ROOT, "src/docs"))
+  end
+
+  def test_out_dir_equal_to_source_dir_fails
+    tmp_src = File.join(tmpdir, "src")
+    FileUtils.cp_r(File.join(DocsSite::ROOT, "src"), tmp_src)
+    [tmp_src, File.dirname(tmp_src)].each do |out_dir|
+      config = DocsSite::Config.new(out_dir: out_dir, source_dir: tmp_src, env: {})
+      assert_raises(DocsSite::BuildError) { DocsSite::Builder.new(config: config, css_command: STUB_CSS, out: StringIO.new).build }
+      assert Dir.exist?(File.join(tmp_src, "docs")), "#{out_dir} must not be removed"
+    end
+  end
+
   def test_missing_docs_dir_fails
     assert_raises(DocsSite::BuildError) { build(source_dir: tmpdir) }
   end
