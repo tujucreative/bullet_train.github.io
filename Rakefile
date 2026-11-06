@@ -6,3 +6,8 @@ Rake::TestTask.new(:test) do |t|
 end
 
 task default: :test
+
+desc "Build the static docs site into _site"
+task :build do
+  ruby "bin/build"
+end

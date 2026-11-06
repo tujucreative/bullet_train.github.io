@@ -6,6 +6,8 @@ module DocsSite
     BULLET_TRAIN_ORIGIN = "https://bullettrain.co"
     UPGRADE_IMAGES = "#{BULLET_TRAIN_ORIGIN}/upgrade-images/"
     DOCS_ORIGIN = "#{BULLET_TRAIN_ORIGIN}/docs"
+    # Corrects a broken link in upstream v1.45.1 docs, keyed by [page slug, href as written in the source].
+    LINK_FIXUPS = {["themes/on-jumpstart-pro-projects", "indirection"] => "/docs/indirection"}.freeze
 
     def initialize(config)
       @config = config
@@ -21,6 +23,7 @@ module DocsSite
     private
 
     def rewrite_value(value, slug)
+      value = LINK_FIXUPS.fetch([slug, value], value)
       if value.start_with?(UPGRADE_IMAGES)
         @config.asset_url("upgrade-images/#{value.delete_prefix(UPGRADE_IMAGES)}")
       elsif value.start_with?(DOCS_ORIGIN)

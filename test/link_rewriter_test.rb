@@ -52,6 +52,16 @@ class LinkRewriterTest < Minitest::Test
     assert_includes rw(a("./indirection.md"), slug: "themes"), 'href="/docs/indirection/"'
   end
 
+  def test_upstream_link_fixup
+    out = rw(a("indirection"), slug: "themes/on-jumpstart-pro-projects", base: "/b")
+    assert_includes out, 'href="/b/docs/indirection/"'
+  end
+
+  def test_link_fixup_limited_to_its_page
+    assert_includes rw(a("indirection"), slug: "themes"), 'href="/docs/indirection/"'
+    assert_includes rw(a("indirection"), slug: "themes/on-other-rails-projects"), 'href="/docs/themes/indirection/"'
+  end
+
   def test_unchanged_links
     ["https://bullettrain.co", "https://github.com/bullet-train-co/magic_test", "#time-based-usage-limits", "mailto:a@b.c"].each do |href|
       assert_includes rw(a(href)), %(href="#{href}")
