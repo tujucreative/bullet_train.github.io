@@ -1,0 +1,133 @@
+sections:
+  - title: Introduction
+    items:
+      - label: Table of Contents
+        url: /docs
+        icon: ti ti-list
+      - label: Getting Started
+        url: /docs/getting-started
+        icon: ti ti-flag
+      - label: Upgrades
+        url: /docs/upgrades
+        icon: ti ti-arrow-up
+  - title: General Topics
+    items:
+      - label: Domain Modeling
+        url: /docs/modeling
+        icon: ti ti-ruler-pencil
+      - label: Indirection
+        url: /docs/indirection
+        icon: ti ti-direction
+      - label: Overriding
+        url: /docs/overriding
+        icon: ti ti-spray
+      - label: Tunneling
+        url: /docs/tunneling
+        icon: ti ti-bolt
+      - label: JavaScript
+        url: /docs/javascript
+        icon: ti ti-pulse
+      - label: Style Sheets
+        url: /docs/stylesheets
+        icon: ti ti-brush
+      - label: Internationalization
+        url: /docs/i18n
+        icon: ti ti-world
+  - title: Developer Tools
+    items:
+      - label: Super Scaffolding
+        url: /docs/super-scaffolding
+        icon: ti ti-wand
+      - label: Action Models
+        url: /docs/action-models
+        icon: ti ti-target
+      - label: Database Seeds
+        url: /docs/seeds
+        icon: ti ti-server
+      - label: Test Suite
+        url: /docs/testing
+        icon: ti ti-check
+      - label: Magic Test
+        url: https://github.com/bullet-train-co/magic_test
+        icon: ti ti-video-camera
+        external: true
+      - label: Application Options
+        url: /docs/application-options
+        icon: ti ti-settings
+      - label: Application Hash
+        url: /docs/application-hash
+        icon: ti ti-view-list-alt
+      - label: Contributing
+        url: /docs/contributing
+        icon: ti ti-github
+  - title: "Accounts & Teams"
+    items:
+      - label: Authentication
+        url: /docs/authentication
+        icon: ti ti-id-badge
+      - label: Teams
+        url: /docs/teams
+        icon: ti ti-user
+      - label: Roles & Permissions
+        url: /docs/permissions
+        icon: ti ti-lock
+      - label: Onboarding
+        url: /docs/onboarding
+        icon: ti ti-direction
+      - label: Namespacing
+        url: /docs/namespacing
+        icon: ti ti-widgetized
+  - title: User Interface
+    items:
+      - label: Field Partials
+        url: /docs/field-partials
+        icon: ti ti-text
+      - label: Themes
+        url: /docs/themes
+        icon: ti ti-palette
+      - label: Nice Partials
+        url: https://github.com/bullet-train-co/nice_partials
+        icon: ti ti-widget
+        external: true
+      - label: Showcase
+        url: https://github.com/bullet-train-co/showcase
+        icon: ti ti-panel
+        external: true
+  - title: Billing
+    items:
+      - label: Stripe
+        url: /docs/billing/stripe
+        icon: ti ti-money
+      - label: Usage
+        url: /docs/billing/usage
+        icon: ti ti-ruler
+  - title: Integration
+    items:
+      - label: REST API
+        url: /docs/api
+        icon: ti ti-settings
+      - label: Zapier
+        url: /docs/zapier
+        icon: ti ti-bolt
+      - label: OAuth Providers
+        url: /docs/oauth
+        icon: ti ti-reload
+      - label: Outgoing Webhooks
+        url: /docs/webhooks/outgoing
+        icon: ti ti-pulse
+      - label: Incoming Webhooks
+        url: /docs/webhooks/incoming
+        icon: ti ti-plug
+  - title: Add-Ons
+    items:
+      - label: Font Awesome Pro
+        url: /docs/font-awesome-pro
+        icon: ti ti-flag
+  - title: Deployment
+    items:
+      - label: Heroku
+        url: /docs/heroku
+        icon: ti ti-cloud-up
+      - label: Desktop Applications
+        url: /docs/desktop
+        icon: ti ti-desktop
