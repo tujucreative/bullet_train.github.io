@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-blue">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title><%= h page.page_title %></title>
+    <meta content="bullet train ruby on rails saas template starter kit" name="keywords" />
+    <meta content="<%= h page.description %>" name="description" />
+    <meta name="twitter:image:src" content="<%= h IMAGE_URL %>" />
+    <meta name="twitter:site" content="@bullettrainco" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="<%= h truncate(page.title, 70) %>" />
+    <meta name="twitter:description" content="<%= h truncate(page.description, 160) %>" />
+    <meta property="og:image" content="<%= h IMAGE_URL %>" />
+    <meta property="og:site_name" content="<%= h Page::SITE_NAME %>" />
+    <meta property="og:type" content="object" />
+    <meta property="og:title" content="<%= h truncate(page.title, 95) %>" />
+    <meta property="og:url" content="<%= h page.absolute_url %>" />
+    <meta property="og:description" content="<%= h page.description %>" />
+    <link href="<%= asset_url("logo/favicon.png") %>" rel="shortcut icon" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" media="all" />
+    <link rel="stylesheet" href="<%= asset_url("assets/themify/themify-icons.css") %>" media="all" />
+    <link rel="stylesheet" href="<%= asset_url("assets/site.css") %>" media="all" />
+    <script src="<%= asset_url("assets/menu.js") %>" defer></script>
+  </head>
+  <body class="bg-gradient-to-br from-secondary-200 to-primary-400 text-base-700 text-sm font-normal">
+<%- menu_html = capture do -%>
+          <div class="flex items-center shrink-0 p-4 bg-blue-700 md:rounded-tl-lg">
+            <a href="<%= config.doc_url("index") %>" class="mx-auto">
+              <img class="h-5 w-auto mx-auto" src="<%= asset_url("logo/logo.png") %>" alt="Bullet Train" />
+            </a>
+
+            <div class="lg:hidden absolute right-0">
+              <button type="button" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" data-menu-close>
+                <span class="sr-only">Close Application Menu</span>
+                <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <nav class="flex-1 space-y-1 overflow-y-auto">
+            <div class="px-5 py-4">
+<%- menu.sections.each do |section| -%>
+              <div class="pb-3">
+                <div class="text-xs py-2 uppercase tracking-wider text-primary-400"><%= h section.title %></div>
+<%- section.items.each do |item| -%>
+                <a href="<%= h item.url %>" class="block group/item hover:text-white hover:no-underline <%= "bg-primary-900 " if menu.active?(item, page.url) %>text-white px-3 py-2 rounded-md">
+                  <div class="inline-block transition group-hover/item:translate-x-3 duration-200 flex items-center">
+                    <span class="mr-3 h-6 w-6 text-center text-secondary-300 text-xl leading-6"><i class="<%= h item.icon %>"></i></span>
+<%- if item.external -%>
+                    <span><%= h item.label %> <i class="ti ti-new-window ml-1"></i></span>
+<%- else -%>
+                    <%= h item.label %>
+<%- end -%>
+                  </div>
+                </a>
+<%- end -%>
+              </div>
+<%- end -%>
+            </div>
+          </nav>
+<%- end -%>
+    <div class="md:p-5">
+      <div class="min-h-screen md:h-auto overflow-hidden md:rounded-lg flex shadow">
+        <div class="lg:hidden hidden" id="mobile-menu">
+          <div class="fixed inset-0 flex z-40">
+            <button type="button" class="fixed inset-0" aria-hidden="true" tabindex="-1" data-menu-close>
+              <div class="absolute inset-0 bg-gradient-to-br from-secondary-200 to-primary-400 opacity-75"></div>
+            </button>
+            <div class="relative flex-1 flex flex-col max-w-xs w-full pb-4 bg-gradient-to-br from-primary-900 to-primary-600 shadow-xl">
+<%= menu_html -%>
+            </div>
+            <div class="shrink-0 w-14" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <div class="hidden lg:flex lg:shrink-0 overflow-y-auto bg-gradient-to-b from-primary-700 to-primary-800">
+          <div class="w-64">
+<%= menu_html -%>
+          </div>
+        </div>
+
+        <div class="flex flex-col w-0 flex-1 overflow-y-auto bg-base-100 lg:border-l">
+          <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabindex="0">
+            <button type="button" class="lg:hidden h-12 w-12 ml-1 flex-none inline-flex items-center justify-center rounded-md text-base-500 hover:text-base-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue" data-menu-open>
+              <span class="sr-only">Open Application Menu</span>
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
+            <div class="py-2 px-1">
+              <div class="mx-auto sm:px-6 sm:py-4 px-2">
+                <div class="bg-white rounded-md shadow sm:py-14 sm:px-12 py-10 px-7">
+                  <div class="prose" style="max-width: none;" id="bt-docs-content">
+<%= page.html %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
