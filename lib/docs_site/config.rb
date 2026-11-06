@@ -10,19 +10,22 @@ module DocsSite
       @out_dir = out_dir || File.join(ROOT, "_site")
       @source_dir = source_dir || File.join(ROOT, "src")
       @docs_dir = File.join(@source_dir, "docs")
-      @site_url = site_url || DEFAULT_SITE_URL
+      @site_url = (site_url || env["SITE_URL"] || DEFAULT_SITE_URL).to_s.sub(%r{/+\z}, "")
     end
 
+    # Public URL of a doc page; index lives at the docs root.
     def doc_url(slug)
       slug == "index" ? "#{base_path}/docs/" : "#{base_path}/docs/#{slug}/"
     end
 
+    # Prefixes a site-root file path with the base path.
     def asset_url(path)
       "#{base_path}/#{path.delete_prefix("/")}"
     end
 
     private
 
+    # Accepts "", "/", "x", "/x/" and always yields "" or "/x".
     def normalize_base_path(value)
       value = value.to_s.strip.gsub(%r{/+\z}, "")
       return "" if value.empty?

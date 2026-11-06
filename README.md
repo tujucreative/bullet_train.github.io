@@ -22,6 +22,7 @@ npm install
 bin/serve              # build with base path "" and serve at http://localhost:4000 (optional PORT argument)
 bin/build              # build into _site/ with the default base path /bullet_train.github.io
 bin/build --base-path "" --out tmp/site   # custom base path and output directory
+bin/build --site-url https://docs.example.com   # origin for og:url and canonical links (or SITE_URL)
 bundle exec rake test  # run the test suite (also the default rake task)
 bin/sync-docs [REF]    # re-vendor docs from bullet_train-core at REF (default v1.45.1)
 ```
@@ -54,7 +55,7 @@ One-time repository setting: Settings → Pages → Build and deployment → Sou
 
 ### Custom domain
 
-Add `src/assets/CNAME` containing the domain, and set the custom domain in Settings → Pages. `actions/configure-pages` then reports an empty base path, so the build uses `""` automatically; no workflow change is needed.
+Set the custom domain in Settings → Pages. With Actions deploys no `CNAME` file is needed: `actions/configure-pages` reports the domain's origin and an empty base path, and the workflow passes both to `bin/build` (`--site-url` and `--base-path`), so no workflow change is needed.
 
 ## License
 

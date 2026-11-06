@@ -24,6 +24,14 @@ class ConfigTest < Minitest::Test
     assert_equal "/foo", Config.new(base_path: "foo", env: {}).base_path
   end
 
+  def test_env_site_url
+    assert_equal "https://docs.example.com", Config.new(env: {"SITE_URL" => "https://docs.example.com/"}).site_url
+  end
+
+  def test_site_url_kwarg_beats_env
+    assert_equal "https://a.test", Config.new(site_url: "https://a.test//", env: {"SITE_URL" => "https://b.test"}).site_url
+  end
+
   def test_doc_url
     c = Config.new(base_path: "", env: {})
     assert_equal "/docs/", c.doc_url("index")

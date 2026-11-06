@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Builds the static docs site. Usage: bin/build [--base-path P] [--out DIR]
+# Builds the static docs site. Usage: bin/build [--base-path P] [--out DIR] [--site-url URL]
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 require "bundler/setup"
 $LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
@@ -8,9 +8,10 @@ require "optparse"
 
 options = {}
 OptionParser.new do |parser|
-  parser.banner = "Usage: bin/build [--base-path P] [--out DIR]"
+  parser.banner = "Usage: bin/build [--base-path P] [--out DIR] [--site-url URL]"
   parser.on("--base-path P", "URL prefix the site is served under (default: #{DocsSite::Config::DEFAULT_BASE_PATH})") { |value| options[:base_path] = value }
   parser.on("--out DIR", "Output directory, replaced on every build; must be empty, new or a previous build (default: _site)") { |value| options[:out_dir] = File.expand_path(value) }
+  parser.on("--site-url URL", "Origin used for og:url and the canonical link (default: SITE_URL or #{DocsSite::Config::DEFAULT_SITE_URL})") { |value| options[:site_url] = value }
 end.parse!
 
 config = DocsSite::Config.new(**options)

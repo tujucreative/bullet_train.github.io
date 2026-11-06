@@ -37,7 +37,7 @@ jobs:
       - id: pages
         uses: actions/configure-pages@v5
 
-      - run: bin/build --base-path "${{ steps.pages.outputs.base_path }}"
+      - run: bin/build --base-path "${{ steps.pages.outputs.base_path }}" --site-url "${{ steps.pages.outputs.origin }}"
 
       - uses: actions/upload-pages-artifact@v3
         with:
