@@ -21,8 +21,7 @@ class BuilderTest < Minitest::Test
     Dir.mktmpdir.tap { |dir| @tmp_dirs << dir }
   end
 
-  def build(base_path: "/bullet_train.github.io", source_dir: nil, css_command: STUB_CSS)
-    out_dir = tmpdir
+  def build(base_path: "/bullet_train.github.io", source_dir: nil, css_command: STUB_CSS, out_dir: tmpdir)
     config = DocsSite::Config.new(base_path: base_path, out_dir: out_dir, source_dir: source_dir, env: {})
     count = DocsSite::Builder.new(config: config, css_command: css_command, out: StringIO.new).build
     [out_dir, count, config]
@@ -66,6 +65,10 @@ class BuilderTest < Minitest::Test
     assert_includes read("docs/webhooks/outgoing/index.html"), 'href="/bullet_train.github.io/docs/webhooks/incoming/#security"'
   end
 
+  def test_root_relative_links_point_at_bullettrain_co
+    assert_includes read("docs/heroku/index.html"), 'href="https://bullettrain.co/users/sign_up"'
+  end
+
   def test_index_grid
     assert_includes read("docs/index.html"), "xl:grid grid-cols-3 gap-20"
   end
@@ -77,12 +80,53 @@ class BuilderTest < Minitest::Test
     refute_includes html, 'href="//'
   end
 
+  def copy_src
+    File.join(tmpdir, "src").tap { |dir| FileUtils.cp_r(File.join(DocsSite::ROOT, "src"), dir) }
+  end
+
   def test_broken_link_fails
-    tmp_src = File.join(tmpdir, "src")
-    FileUtils.cp_r(File.join(DocsSite::ROOT, "src"), tmp_src)
+    tmp_src = copy_src
     File.open(File.join(tmp_src, "docs/teams.md"), "a") { |file| file.write("\n[x](/docs/nope)\n") }
     error = assert_raises(DocsSite::BuildError) { build(base_path: "", source_dir: tmp_src) }
     assert_includes error.message, "Broken link in teams: /docs/nope/"
+  end
+
+  def test_unprefixed_link_fails
+    tmp_src = copy_src
+    layout = File.join(tmp_src, "layout.html.erb")
+    File.write(layout, File.read(layout).sub("<main ", %(<a href="/somewhere-unprefixed">x</a><main )))
+    error = assert_raises(DocsSite::BuildError) { build(source_dir: tmp_src) }
+    assert_includes error.message, "Unprefixed link in teams: /somewhere-unprefixed"
+  end
+
+  def test_marker_written
+    assert_built ".docs-site-build"
+  end
+
+  def test_foreign_out_dir_refused
+    out_dir = tmpdir
+    keep = File.join(out_dir, "keep.txt")
+    File.write(keep, "mine")
+    error = assert_raises(DocsSite::BuildError) { build(out_dir: out_dir) }
+    assert_includes error.message, "Refusing to replace #{out_dir}: not empty and not a previous docs build"
+    assert_equal "mine", File.read(keep)
+  end
+
+  def test_previous_build_replaced
+    out_dir = tmpdir
+    build(out_dir: out_dir)
+    File.write(File.join(out_dir, "stale.txt"), "old")
+    _, count = build(out_dir: out_dir)
+    assert_equal 57, count
+    refute File.exist?(File.join(out_dir, "stale.txt"))
+    assert_built "docs/index.html", out_dir
+  end
+
+  def test_empty_existing_out_dir_ok
+    out_dir = tmpdir
+    assert Dir.empty?(out_dir)
+    _, count = build(out_dir: out_dir)
+    assert_equal 57, count
   end
 
   def test_out_dir_at_root_fails
@@ -92,8 +136,7 @@ class BuilderTest < Minitest::Test
   end
 
   def test_out_dir_equal_to_source_dir_fails
-    tmp_src = File.join(tmpdir, "src")
-    FileUtils.cp_r(File.join(DocsSite::ROOT, "src"), tmp_src)
+    tmp_src = copy_src
     [tmp_src, File.dirname(tmp_src)].each do |out_dir|
       config = DocsSite::Config.new(out_dir: out_dir, source_dir: tmp_src, env: {})
       assert_raises(DocsSite::BuildError) { DocsSite::Builder.new(config: config, css_command: STUB_CSS, out: StringIO.new).build }

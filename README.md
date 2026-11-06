@@ -26,7 +26,9 @@ bundle exec rake test  # run the test suite (also the default rake task)
 bin/sync-docs [REF]    # re-vendor docs from bullet_train-core at REF (default v1.45.1)
 ```
 
-The build fails if any internal `/docs` link does not resolve to a page. One known-broken upstream link is corrected in `LinkRewriter::LINK_FIXUPS`.
+The output directory is deleted and rebuilt on every build. To protect other files, `bin/build` only replaces a directory that is missing, empty, or a previous build (marked by a `.docs-site-build` file); anything else fails the build.
+
+The build fails if any internal `/docs` link does not resolve to a page, or, under a base path, if any root-relative link or image lacks that prefix. Links to other paths on the live site (such as `/users/sign_up`) are pointed at `https://bullettrain.co`. One known-broken upstream link is corrected in `LinkRewriter::LINK_FIXUPS`.
 
 Testing note: the upstream-layout check in `test/menu_test.rb` is skipped unless `BT_CORE_DIR` points at a `bullet_train-core` checkout.
 

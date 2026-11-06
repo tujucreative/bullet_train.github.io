@@ -10,7 +10,7 @@ options = {}
 OptionParser.new do |parser|
   parser.banner = "Usage: bin/build [--base-path P] [--out DIR]"
   parser.on("--base-path P", "URL prefix the site is served under (default: #{DocsSite::Config::DEFAULT_BASE_PATH})") { |value| options[:base_path] = value }
-  parser.on("--out DIR", "Output directory (default: _site)") { |value| options[:out_dir] = File.expand_path(value) }
+  parser.on("--out DIR", "Output directory, replaced on every build; must be empty, new or a previous build (default: _site)") { |value| options[:out_dir] = File.expand_path(value) }
 end.parse!
 
 config = DocsSite::Config.new(**options)

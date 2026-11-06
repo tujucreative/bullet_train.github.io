@@ -68,6 +68,27 @@ class LinkRewriterTest < Minitest::Test
     end
   end
 
+  def test_root_relative_non_docs_link
+    assert_includes rw(a("/users/sign_up")), 'href="https://bullettrain.co/users/sign_up"'
+  end
+
+  def test_root_relative_non_docs_link_with_fragment_and_base
+    out = rw(a("/pricing#plans"), base: "/bullet_train.github.io")
+    assert_includes out, 'href="https://bullettrain.co/pricing#plans"'
+  end
+
+  def test_protocol_relative_unchanged
+    assert_includes rw(a("//example.com/x")), 'href="//example.com/x"'
+  end
+
+  def test_relative_img_unchanged
+    assert_includes rw('<img src="foo.png">', slug: "teams"), 'src="foo.png"'
+  end
+
+  def test_root_relative_img
+    assert_includes rw('<img src="/images/x.png">', base: "/b"), 'src="https://bullettrain.co/images/x.png"'
+  end
+
   def test_preserves_style_and_utf8
     html = '<pre style="background-color:#fff;"><code>🚅 &amp; x</code></pre>'
     assert_equal html, rw(html)
